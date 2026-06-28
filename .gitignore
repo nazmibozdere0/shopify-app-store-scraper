@@ -1,0 +1,16 @@
+.DS_Store
+*.pyc
+__pycache__/
+.scrapy/
+httpcache/
+
+# Generated data files — taxonomy is the exception (reference data, committed)
+output/apps.csv
+output/reviews.csv
+output/categories.csv
+output/apps_categories.csv
+output/pricing_plans.csv
+output/pricing_plan_features.csv
+output/key_benefits.csv
+output/app_categories_enriched.csv
+!output/category_taxonomy.csv

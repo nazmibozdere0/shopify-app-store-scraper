@@ -34,14 +34,14 @@
     "app_id": "9f0b03f2-e3b5-4c29-bc0e-0393852bcf43"
   },
   {
-    "rating": "5.0",
+    "rating": "0.0",
     "developer": "Zen merchant",
     "url": "https://apps.shopify.com/calendify",
     "pricing_hint": "Free to install. Additional charges may apply.",
     "lastmod": "2022-03-17",
     "tagline": null,
     "developer_link": "https://apps.shopify.com/partners/developer-b8774036cec617c5",
-    "reviews_count": 1,
+    "reviews_count": 0,
     "icon": "https://cdn.shopify.com/app-store/listing_images/36525f3fd473ab3c44ec4e1fc51586c3/icon/COyI58z0lu8CEAE=.png",
     "title": "Calendify",
     "description_raw": "<div id=\"app-details\" class=\"tw-flex tw-flex-col tw-gap-lg\">\n      <h2 class=\"tw-text-heading-lg tw-text-pretty\">\n        Create holiday marketing campaigns. Get the most out of seasonal sales using our marketing tools.\n      </h2>\n      <p class=\"tw-hidden lg:tw-block tw-text-body-md tw-text-fg-secondary\">\n        Calendify makes holiday marketing easy for you!\nWith help of our specialized marketing tools: email campaigns, announcement bars, and scheduled sales merchants can effectively reach their audience on their favorite occasions. Stop planning manually your every holiday initiative, just browse through our curated calendar of marketing opportunities, pick ones that you are interested in, select the types of promotions that you want to activate and that's it, the rest is on us.\n      </p>\n      <div class=\"lg:tw-hidden tw-text-body-md tw-text-fg-secondary\" data-truncate-app-details>\n        <span data-truncate-content-copy>\n          Calendify makes holiday marketing easy for you!\nWith help of our specialized marketing tools: email campaigns, announcement bars, and scheduled sales merchants can effectively reach their audience on their favorite occasions. Stop planning manually your every holiday initiative, just browse through our curated calendar of marketing opportunities, pick ones that you are interested in, select the types of promotions that you want to activate and that's it, the rest is on us.\n        </span>\n        <span data-truncate-content-toggle class=\"tw-mt-xs tw-text-fg-primary tw-underline tw-underline-offset-4 tw-decoration-fg-primary tw-hidden tw-text-link-md hover:tw-text-fg-highlight-primary hover:tw-border-transparent\">\n          more\n        </span>\n      </div>\n      <ul class=\"tw-list-disc tw-pl-lg\">\n        <li class=\"tw-text-body-md tw-text-fg-secondary tw-mb-xs\">\n          Calendar of holiday occasions\n        </li>\n        <li class=\"tw-text-body-md tw-text-fg-secondary tw-mb-xs\">\n          Marketing tools to reach your customers\n        </li>\n        <li class=\"tw-text-body-md tw-text-fg-secondary tw-mb-xs\">\n          Automated marketing campaigns - setup once, run whenever and as much as you like\n        </li>\n      </ul>\n    </div>",

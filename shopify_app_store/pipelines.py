@@ -61,7 +61,7 @@ class WriteToCSV(object):
             self.write_header('apps_categories.csv', ['app_id', 'category_id'])
 
         if self.is_empty('categories.csv'):
-            self.write_header('categories.csv', ['id', 'title'])
+            self.write_header('categories.csv', ['id', 'title', 'slug'])
 
         if self.is_empty('pricing_plans.csv'):
             self.write_header('pricing_plans.csv', ['id', 'app_id', 'title', 'price'])

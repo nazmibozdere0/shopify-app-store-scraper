@@ -52,6 +52,7 @@ class PricingPlanFeature(scrapy.Item):
 class Category(scrapy.Item):
     id = scrapy.Field()
     title = scrapy.Field()
+    slug = scrapy.Field()
 
 
 class AppCategory(scrapy.Item):

@@ -86,6 +86,28 @@ class AppStoreSpider(LastmodSpider):
                                                                                               index=False)
         spider.logger.info('Unique reviews are there 🔥')
 
+        # Enrich app categories with L1/L2/L3 from taxonomy
+        spider.logger.info('Building enriched app categories...')
+        import os
+        taxonomy_path = 'output/category_taxonomy.csv'
+        if os.path.exists(taxonomy_path):
+            apps_df = pd.read_csv('output/apps.csv')
+            apps_cats_df = pd.read_csv('output/apps_categories.csv')
+            cats_df = pd.read_csv('output/categories.csv')
+            taxonomy_df = pd.read_csv(taxonomy_path)
+
+            enriched = (
+                apps_cats_df
+                .merge(cats_df[['id', 'title', 'slug']], left_on='category_id', right_on='id')
+                .merge(taxonomy_df[['slug', 'level', 'l1_label', 'l2_label', 'l3_label']], on='slug', how='left')
+                .merge(apps_df[['id', 'title']], left_on='app_id', right_on='id', suffixes=('_cat', '_app'))
+            )[['app_id', 'title_app', 'slug', 'title_cat', 'level', 'l1_label', 'l2_label', 'l3_label']]
+            enriched.columns = ['app_id', 'app_title', 'category_slug', 'category_title', 'level', 'l1', 'l2', 'l3']
+            enriched.to_csv('output/app_categories_enriched.csv', index=False)
+            spider.logger.info('Enriched categories saved ✨')
+        else:
+            spider.logger.warning('category_taxonomy.csv not found, skipping enrichment')
+
         return super().close(spider, reason)
 
     def parse_app(self, response):
@@ -100,8 +122,8 @@ class AppStoreSpider(LastmodSpider):
 
         url = response.request.url
         title = response.css('#adp-hero h1 ::text').extract_first(default='').strip()
-        developer = response.css('#adp-hero a[href^=\/partners]::text').extract_first().strip()
-        developer_link = 'https://{}{}'.format(self.BASE_DOMAIN, response.css('#adp-hero a[href^=\/partners]::attr(href)').extract_first().strip())
+        developer = response.css('#adp-hero a[href*="/partners/"]::text').extract_first('').strip()
+        developer_link = response.css('#adp-hero a[href*="/partners/"]::attr(href)').extract_first('')
         icon = response.css('#adp-hero img::attr(src)').extract_first()
         rating = response.css('#adp-hero dd > span.tw-text-fg-secondary ::text').extract_first()
         reviews_count_raw = response.css('#reviews-link::text').extract_first(default='0 Reviews')
@@ -123,18 +145,25 @@ class AppStoreSpider(LastmodSpider):
                               title=pricing_plan.css('[data-test-id="name"] ::text').extract_first(default='').strip(),
                               price=pricing_plan.css('.app-details-pricing-format-group::attr(aria-label)').extract_first().strip())
 
-            for feature in pricing_plan.css('ul[data-test-id="features"] li::text').extract():
+            for feature in pricing_plan.css('ul[data-test-id="features"] li span.tw-flex::text').extract():
                 feature_text = feature.strip()
                 if not feature_text:
                     continue
 
                 yield PricingPlanFeature(pricing_plan_id=pricing_plan_id, app_id=app_id, feature=feature_text)
 
-        for category_raw in response.css('#adp-details-section a[href^="https://apps.shopify.com/categories"]::text').extract():
-            category = category_raw.strip()
-            category_id = hashlib.md5(category.lower().encode()).hexdigest()
+        for cat_el in response.css('#adp-details-section a[href^="https://apps.shopify.com/categories"]'):
+            href = cat_el.attrib.get('href', '')
+            # /all?feature_handles=... olan linkler feature tag — taxonomy dışı, atla
+            if '/all?' in href:
+                continue
+            slug = href.split('/categories/')[1].split('?')[0].rstrip('/')
+            label = cat_el.css('::text').get('').strip()
+            if not label:
+                continue
+            category_id = hashlib.md5(slug.encode()).hexdigest()
 
-            yield Category(id=category_id, title=category)
+            yield Category(id=category_id, title=label, slug=slug)
             yield AppCategory(app_id=app_id, category_id=category_id)
 
         yield App(
@@ -158,7 +187,7 @@ class AppStoreSpider(LastmodSpider):
         skip_if_first_scraped = response.meta.get('skip_if_first_scraped', False)
 
         for idx, review in enumerate(response.css('[data-merchant-review]')):
-            author = review.css('div.tw-text-heading-xs.tw-text-fg-primary.tw-overflow-hidden.tw-text-ellipsis.tw-whitespace-nowrap ::text').extract_first(default='').strip()
+            author = review.css('div.tw-text-heading-xs.tw-text-fg-primary span.tw-overflow-hidden::text').extract_first(default='').strip()
             rating = review.css('[aria-label]::attr(aria-label)').extract_first(default='').strip().split()[0]
             posted_at = review.css('div.tw-flex.tw-items-center.tw-justify-between.tw-mb-md > div.tw-text-body-xs.tw-text-fg-tertiary ::text').extract_first(default='').strip()
             raw_body = BeautifulSoup(review.css('[data-truncate-review],[data-truncate-content-copy]').extract_first(), features='lxml')
