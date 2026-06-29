@@ -29,8 +29,18 @@ class DemoSpider(AppStoreSpider):
 
         self.processed_reviews = pd.read_csv('{}{}{}'.format('./', WriteToCSV.OUTPUT_DIR, 'reviews.csv'))
 
-        req = urllib.request.Request(self.SITEMAP_EN, headers={'User-Agent': 'Mozilla/5.0'})
-        xml = urllib.request.urlopen(req).read().decode('utf-8')
+        import time
+        xml = None
+        for attempt in range(5):
+            try:
+                req = urllib.request.Request(self.SITEMAP_EN, headers={'User-Agent': 'Mozilla/5.0'})
+                xml = urllib.request.urlopen(req, timeout=30).read().decode('utf-8')
+                break
+            except Exception as e:
+                self.logger.warning('Sitemap fetch attempt %d failed: %s', attempt + 1, e)
+                if attempt == 4:
+                    raise
+                time.sleep(3 * (attempt + 1))
 
         entries = re.findall(
             r'<url>\s*<loc>([^<]+)</loc>\s*<lastmod>([^<]+)</lastmod>',
